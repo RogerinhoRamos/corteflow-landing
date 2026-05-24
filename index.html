@@ -114,9 +114,13 @@
     .hero::before {
       content: '';
       position: absolute; inset: 0;
-      background:
-        radial-gradient(ellipse 60% 50% at 50% 30%, rgba(201,168,76,0.08) 0%, transparent 70%),
-        radial-gradient(ellipse 40% 60% at 20% 80%, rgba(201,168,76,0.04) 0%, transparent 60%);
+      background: 
+        radial-gradient(ellipse 60% 50% at 50% 30%, rgba(10,10,10,0.65) 0%, #0a0a0a 100%),
+        url('img/hero_bg.png') no-repeat center center;
+      background-size: cover;
+      opacity: 0.15;
+      z-index: 0;
+      filter: grayscale(20%) contrast(105%);
     }
     .hero-badge {
       display: inline-flex; align-items: center; gap: 8px;
@@ -446,6 +450,195 @@
       .hero-btns { flex-direction: column; align-items: center; }
       .btn-primary, .btn-outline { width: 100%; max-width: 300px; text-align: center; }
     }
+
+    /* ── NOVAS MELHORIAS DE NAVEGAÇÃO E DESIGN ──────────────── */
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+    .nav-links a {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: color 0.2s, transform 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--gold);
+      transform: translateY(-1px);
+    }
+
+    .pratica-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+    .pratica-tab-btn {
+      padding: 12px 28px;
+      background: var(--surf2);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pratica-tab-btn:hover {
+      border-color: rgba(201,168,76,0.3);
+      color: var(--white);
+    }
+    .pratica-tab-btn.active {
+      background: var(--gold3);
+      border-color: var(--gold);
+      color: var(--gold);
+      box-shadow: 0 0 20px rgba(201,168,76,0.1);
+    }
+    
+    .pratica-tabs-content {
+      position: relative;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+    .pratica-tab-panel {
+      display: none;
+      width: 100%;
+      max-width: 320px;
+      animation: fadeIn 0.4s ease forwards;
+    }
+    .pratica-tab-panel.active {
+      display: block;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── FAQ ACORDEÃO ───────────────────────────────────── */
+    .faq-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 32px;
+    }
+    .faq-item {
+      background: var(--surf2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.3s, transform 0.2s;
+    }
+    .faq-item:hover {
+      border-color: rgba(201,168,76,0.3);
+      transform: translateY(-1px);
+    }
+    .faq-question {
+      padding: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+    .faq-question h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--white);
+      margin: 0;
+    }
+    .faq-icon {
+      width: 18px;
+      height: 18px;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .faq-icon::before, .faq-icon::after {
+      content: '';
+      position: absolute;
+      background: var(--gold);
+      transition: transform 0.3s ease;
+    }
+    .faq-icon::before {
+      top: 8px; left: 0; right: 0; height: 2px;
+    }
+    .faq-icon::after {
+      left: 8px; top: 0; bottom: 0; width: 2px;
+    }
+    .faq-item.active .faq-icon::after {
+      transform: rotate(90deg) scaleY(0);
+    }
+    .faq-item.active .faq-icon::before {
+      transform: rotate(180deg);
+    }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s cubic-bezier(0, 1, 0, 1), padding 0.3s ease;
+      padding: 0 24px;
+    }
+    .faq-item.active .faq-answer {
+      max-height: 1000px;
+      padding: 0 24px 24px;
+      transition: max-height 0.3s cubic-bezier(1, 0, 1, 0), padding 0.3s ease;
+    }
+    .faq-answer p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* ── MOBILE CTA FLUTUANTE ───────────────────────────── */
+    .mobile-cta-container {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      padding: 16px 20px;
+      background: rgba(10, 10, 10, 0.85);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(201, 168, 76, 0.15);
+      z-index: 99;
+      display: none;
+      justify-content: center;
+      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .mobile-cta-btn {
+      width: 100%;
+      max-width: 480px;
+      padding: 14px;
+      background: var(--gold);
+      color: #0a0a0a;
+      font-weight: 700;
+      font-size: 15px;
+      border-radius: 10px;
+      text-decoration: none;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(201, 168, 76, 0.3);
+      transition: background 0.2s;
+    }
+    .mobile-cta-btn:hover {
+      background: var(--gold2);
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+      .nav-links { display: none; }
+      .mockup-sidebar { display: none; }
+      .mockup-content { height: 260px; }
+      .hero-btns { flex-direction: column; align-items: center; }
+      .btn-primary, .btn-outline { width: 100%; max-width: 300px; text-align: center; }
+      
+      .mobile-cta-container { display: flex; }
+      body { padding-bottom: 80px; }
+      .pratica-tab-panel { max-width: 100%; }
+    }
   </style>
 </head>
 <body>
@@ -455,6 +648,12 @@
   <a href="#" class="nav-logo">
     <span>✂️</span> CorteFlow
   </a>
+  <div class="nav-links">
+    <a href="#funcionalidades">Funcionalidades</a>
+    <a href="#pratica">Veja na Prática</a>
+    <a href="#diferenciais">Diferenciais</a>
+    <a href="#planos">Planos</a>
+  </div>
   <a href="https://web-production-472f4f.up.railway.app/interesse" target="_blank" class="nav-cta">Solicitar acesso</a>
 </nav>
 
@@ -668,126 +867,146 @@
   </div>
 </section>
 <!-- TELAS NA PRÁTICA -->
-<section style="background:var(--surf);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:100px 24px;">
+<section id="pratica" style="background:var(--surf);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:100px 24px;">
   <div class="container">
     <div class="section-eyebrow" style="text-align:center;">Veja na prática</div>
     <h2 class="section-title" style="text-align:center;">Do barbeiro ao cliente,<br>tudo conectado</h2>
-    <p class="section-sub" style="text-align:center;margin:0 auto 64px;">Três experiências pensadas para cada momento do atendimento.</p>
+    <p class="section-sub" style="text-align:center;margin:0 auto 48px;">Três experiências pensadas para cada momento do atendimento.</p>
 
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;align-items:start;">
+    <!-- SELETOR DE ABAS -->
+    <div class="pratica-tabs">
+      <button class="pratica-tab-btn active" onclick="switchPraticaTab('barbeiro')">
+        <span>Para o Barbeiro</span>
+      </button>
+      <button class="pratica-tab-btn" onclick="switchPraticaTab('cliente')">
+        <span>Para o Cliente</span>
+      </button>
+      <button class="pratica-tab-btn" onclick="switchPraticaTab('salao')">
+        <span>Na Barbearia</span>
+      </button>
+    </div>
+
+    <!-- CONTAINER DAS ABAS -->
+    <div class="pratica-tabs-content">
 
       <!-- Card 1: Login do barbeiro -->
-      <div style="background:var(--surf2);border:1px solid var(--border);border-radius:20px;overflow:hidden;">
-        <!-- Badge + Descrição ACIMA -->
-        <div style="padding:20px 20px 16px;">
-          <div style="display:inline-flex;align-items:center;gap:6px;
-               background:rgba(76,175,125,.12);border:1px solid rgba(76,175,125,.25);
-               border-radius:20px;padding:4px 12px;margin-bottom:12px;">
-            <span style="width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;"></span>
-            <span style="font-size:10px;font-weight:700;color:var(--green);letter-spacing:1px;text-transform:uppercase;">Para o barbeiro</span>
+      <div id="tab-barbeiro" class="pratica-tab-panel active">
+        <div style="background:var(--surf2);border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 15px 30px rgba(0,0,0,0.4);transition:transform 0.3s, border-color 0.3s;">
+          <!-- Badge + Descrição ACIMA -->
+          <div style="padding:20px 20px 16px;">
+            <div style="display:inline-flex;align-items:center;gap:6px;
+                 background:rgba(76,175,125,.12);border:1px solid rgba(76,175,125,.25);
+                 border-radius:20px;padding:4px 12px;margin-bottom:12px;">
+              <span style="width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;"></span>
+              <span style="font-size:10px;font-weight:700;color:var(--green);letter-spacing:1px;text-transform:uppercase;">Para o barbeiro</span>
+            </div>
+            <div style="font-size:16px;font-weight:700;color:var(--white);margin-bottom:6px;">Login do barbeiro</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.6;">Acesso rápido pelo celular. A barbearia na palma da mão, em qualquer lugar.</div>
           </div>
-          <div style="font-size:16px;font-weight:700;color:var(--white);margin-bottom:6px;">Login do barbeiro</div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.6;">Acesso rápido pelo celular. A barbearia na palma da mão, em qualquer lugar.</div>
-        </div>
-        <!-- Mockup -->
-        <div style="background:#111;border-top:1px solid var(--border);padding:20px;display:flex;justify-content:center;">
-          <div style="background:#1a1a1a;border:2px solid #333;border-radius:28px;padding:10px 7px;width:180px;box-shadow:0 20px 40px rgba(0,0,0,0.5);">
-            <div style="background:#111;border-radius:20px;overflow:hidden;padding:14px;">
-              <div style="text-align:center;margin-bottom:14px;">
-                <div style="font-size:24px;">✂️</div>
-                <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:900;color:var(--gold);">CorteFlow</div>
-                <div style="font-size:8px;color:var(--muted);margin-top:2px;">Sua barbearia no controle</div>
+          <!-- Mockup -->
+          <div style="background:#111;border-top:1px solid var(--border);padding:20px;display:flex;justify-content:center;">
+            <div style="background:#1a1a1a;border:2px solid #333;border-radius:28px;padding:10px 7px;width:180px;box-shadow:0 20px 40px rgba(0,0,0,0.5);">
+              <div style="background:#111;border-radius:20px;overflow:hidden;padding:14px;">
+                <div style="text-align:center;margin-bottom:14px;">
+                  <div style="font-size:24px;">✂️</div>
+                  <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:900;color:var(--gold);">CorteFlow</div>
+                  <div style="font-size:8px;color:var(--muted);margin-top:2px;">Sua barbearia no controle</div>
+                </div>
+                <div style="background:#1e1e1e;border:1px solid var(--border);border-radius:8px;padding:10px;">
+                  <div style="font-size:10px;font-weight:600;margin-bottom:7px;">Entrar na sua conta</div>
+                  <div style="background:#2a2a2a;border-radius:5px;padding:5px 8px;font-size:8px;color:var(--muted);margin-bottom:5px;">seu@email.com</div>
+                  <div style="background:#2a2a2a;border-radius:5px;padding:5px 8px;font-size:8px;color:var(--muted);margin-bottom:8px;">••••••••</div>
+                  <div style="background:var(--gold);border-radius:5px;padding:6px;font-size:8px;font-weight:700;color:#0a0a0a;text-align:center;">Entrar</div>
+                </div>
+                <div style="text-align:center;margin-top:8px;font-size:7px;color:var(--muted);">Quer conhecer? <span style="color:var(--gold);">Solicite acesso</span></div>
               </div>
-              <div style="background:#1e1e1e;border:1px solid var(--border);border-radius:8px;padding:10px;">
-                <div style="font-size:10px;font-weight:600;margin-bottom:7px;">Entrar na sua conta</div>
-                <div style="background:#2a2a2a;border-radius:5px;padding:5px 8px;font-size:8px;color:var(--muted);margin-bottom:5px;">seu@email.com</div>
-                <div style="background:#2a2a2a;border-radius:5px;padding:5px 8px;font-size:8px;color:var(--muted);margin-bottom:8px;">••••••••</div>
-                <div style="background:var(--gold);border-radius:5px;padding:6px;font-size:8px;font-weight:700;color:#0a0a0a;text-align:center;">Entrar</div>
-              </div>
-              <div style="text-align:center;margin-top:8px;font-size:7px;color:var(--muted);">Quer conhecer? <span style="color:var(--gold);">Solicite acesso</span></div>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Card 2: Agendamento do cliente -->
-      <div style="background:var(--surf2);border:1px solid var(--border);border-radius:20px;overflow:hidden;">
-        <!-- Badge + Descrição ACIMA -->
-        <div style="padding:20px 20px 16px;">
-          <div style="display:inline-flex;align-items:center;gap:6px;
-               background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.25);
-               border-radius:20px;padding:4px 12px;margin-bottom:12px;">
-            <span style="width:7px;height:7px;border-radius:50%;background:var(--gold);display:inline-block;"></span>
-            <span style="font-size:10px;font-weight:700;color:var(--gold);letter-spacing:1px;text-transform:uppercase;">Para o cliente</span>
+      <div id="tab-cliente" class="pratica-tab-panel">
+        <div style="background:var(--surf2);border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 15px 30px rgba(0,0,0,0.4);transition:transform 0.3s, border-color 0.3s;">
+          <!-- Badge + Descrição ACIMA -->
+          <div style="padding:20px 20px 16px;">
+            <div style="display:inline-flex;align-items:center;gap:6px;
+                 background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.25);
+                 border-radius:20px;padding:4px 12px;margin-bottom:12px;">
+              <span style="width:7px;height:7px;border-radius:50%;background:var(--gold);display:inline-block;"></span>
+              <span style="font-size:10px;font-weight:700;color:var(--gold);letter-spacing:1px;text-transform:uppercase;">Para o cliente</span>
+            </div>
+            <div style="font-size:16px;font-weight:700;color:var(--white);margin-bottom:6px;">Agendamento online</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.6;">O cliente acessa pelo link, escolhe o serviço e o horário. Sem ligação, sem WhatsApp.</div>
           </div>
-          <div style="font-size:16px;font-weight:700;color:var(--white);margin-bottom:6px;">Agendamento online</div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.6;">O cliente acessa pelo link, escolhe o serviço e o horário. Sem ligação, sem WhatsApp.</div>
-        </div>
-        <!-- Mockup -->
-        <div style="background:#111;border-top:1px solid var(--border);padding:20px;display:flex;justify-content:center;">
-          <div style="background:#1a1a1a;border:2px solid #333;border-radius:28px;padding:10px 7px;width:180px;box-shadow:0 20px 40px rgba(0,0,0,0.5);">
-            <div style="background:#111;border-radius:20px;overflow:hidden;padding:12px;">
-              <div style="text-align:center;margin-bottom:10px;">
-                <div style="font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">Léo BarberShop</div>
-                <div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--gold);">Agendar serviço</div>
+          <!-- Mockup -->
+          <div style="background:#111;border-top:1px solid var(--border);padding:20px;display:flex;justify-content:center;">
+            <div style="background:#1a1a1a;border:2px solid #333;border-radius:28px;padding:10px 7px;width:180px;box-shadow:0 20px 40px rgba(0,0,0,0.5);">
+              <div style="background:#111;border-radius:20px;overflow:hidden;padding:12px;">
+                <div style="text-align:center;margin-bottom:10px;">
+                  <div style="font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">Léo BarberShop</div>
+                  <div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--gold);">Agendar serviço</div>
+                </div>
+                <div style="font-size:7px;color:var(--muted);margin-bottom:5px;">Escolha o serviço</div>
+                <div style="background:rgba(201,168,76,0.15);border:1px solid var(--gold);border-radius:5px;padding:5px 7px;margin-bottom:3px;display:flex;justify-content:space-between;">
+                  <span style="font-size:8px;font-weight:700;">✂️ Corte + Barba</span>
+                  <span style="font-size:8px;color:var(--gold);">R$55</span>
+                </div>
+                <div style="background:#1e1e1e;border:1px solid var(--border);border-radius:5px;padding:5px 7px;margin-bottom:7px;display:flex;justify-content:space-between;">
+                  <span style="font-size:8px;color:var(--muted);">✂️ Corte</span>
+                  <span style="font-size:8px;color:var(--muted);">R$35</span>
+                </div>
+                <div style="font-size:7px;color:var(--muted);margin-bottom:5px;">Escolha o horário</div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-bottom:7px;">
+                  <div style="background:#1e1e1e;border:1px solid var(--border);border-radius:3px;padding:3px;font-size:7px;text-align:center;color:var(--muted);">🔒 09:00</div>
+                  <div style="background:rgba(201,168,76,0.15);border:1px solid var(--gold);border-radius:3px;padding:3px;font-size:7px;text-align:center;color:var(--gold);font-weight:700;">10:00</div>
+                  <div style="background:#1e1e1e;border:1px solid var(--border);border-radius:3px;padding:3px;font-size:7px;text-align:center;color:var(--muted);">11:00</div>
+                </div>
+                <div style="background:var(--gold);border-radius:5px;padding:6px;font-size:8px;font-weight:700;color:#0a0a0a;text-align:center;">✓ Confirmar</div>
               </div>
-              <div style="font-size:7px;color:var(--muted);margin-bottom:5px;">Escolha o serviço</div>
-              <div style="background:rgba(201,168,76,0.15);border:1px solid var(--gold);border-radius:5px;padding:5px 7px;margin-bottom:3px;display:flex;justify-content:space-between;">
-                <span style="font-size:8px;font-weight:700;">✂️ Corte + Barba</span>
-                <span style="font-size:8px;color:var(--gold);">R$55</span>
-              </div>
-              <div style="background:#1e1e1e;border:1px solid var(--border);border-radius:5px;padding:5px 7px;margin-bottom:7px;display:flex;justify-content:space-between;">
-                <span style="font-size:8px;color:var(--muted);">✂️ Corte</span>
-                <span style="font-size:8px;color:var(--muted);">R$35</span>
-              </div>
-              <div style="font-size:7px;color:var(--muted);margin-bottom:5px;">Escolha o horário</div>
-              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-bottom:7px;">
-                <div style="background:#1e1e1e;border:1px solid var(--border);border-radius:3px;padding:3px;font-size:7px;text-align:center;color:var(--muted);">🔒 09:00</div>
-                <div style="background:rgba(201,168,76,0.15);border:1px solid var(--gold);border-radius:3px;padding:3px;font-size:7px;text-align:center;color:var(--gold);font-weight:700;">10:00</div>
-                <div style="background:#1e1e1e;border:1px solid var(--border);border-radius:3px;padding:3px;font-size:7px;text-align:center;color:var(--muted);">11:00</div>
-              </div>
-              <div style="background:var(--gold);border-radius:5px;padding:6px;font-size:8px;font-weight:700;color:#0a0a0a;text-align:center;">✓ Confirmar</div>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Card 3: Modo Salão -->
-      <div style="background:var(--surf2);border:1px solid var(--border);border-radius:20px;overflow:hidden;">
-        <!-- Badge + Descrição ACIMA -->
-        <div style="padding:20px 20px 16px;">
-          <div style="display:inline-flex;align-items:center;gap:6px;
-               background:rgba(68,136,255,.12);border:1px solid rgba(68,136,255,.25);
-               border-radius:20px;padding:4px 12px;margin-bottom:12px;">
-            <span style="width:7px;height:7px;border-radius:50%;background:#4488ff;display:inline-block;"></span>
-            <span style="font-size:10px;font-weight:700;color:#4488ff;letter-spacing:1px;text-transform:uppercase;">Na barbearia</span>
+      <div id="tab-salao" class="pratica-tab-panel">
+        <div style="background:var(--surf2);border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 15px 30px rgba(0,0,0,0.4);transition:transform 0.3s, border-color 0.3s;">
+          <!-- Badge + Descrição ACIMA -->
+          <div style="padding:20px 20px 16px;">
+            <div style="display:inline-flex;align-items:center;gap:6px;
+                 background:rgba(68,136,255,.12);border:1px solid rgba(68,136,255,.25);
+                 border-radius:20px;padding:4px 12px;margin-bottom:12px;">
+              <span style="width:7px;height:7px;border-radius:50%;background:#4488ff;display:inline-block;"></span>
+              <span style="font-size:10px;font-weight:700;color:#4488ff;letter-spacing:1px;text-transform:uppercase;">Na barbearia</span>
+            </div>
+            <div style="font-size:16px;font-weight:700;color:var(--white);margin-bottom:6px;">Modo Salão</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.6;">Tela para o tablet da barbearia. Atualiza em tempo real com a fila e os números do dia.</div>
           </div>
-          <div style="font-size:16px;font-weight:700;color:var(--white);margin-bottom:6px;">Modo Salão</div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.6;">Tela para o tablet da barbearia. Atualiza em tempo real com a fila e os números do dia.</div>
-        </div>
-        <!-- Mockup -->
-        <div style="background:#111;border-top:1px solid var(--border);padding:20px;display:flex;justify-content:center;">
-          <div style="background:#1a1a1a;border:2px solid #333;border-radius:14px;padding:7px;width:230px;box-shadow:0 20px 40px rgba(0,0,0,0.5);">
-            <div style="background:#0f0f0f;border-radius:8px;overflow:hidden;padding:9px;">
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;border-bottom:1px solid var(--border);padding-bottom:5px;">
-                <span style="font-family:'Playfair Display',serif;font-size:9px;font-weight:900;color:var(--gold);">✂️ Léo BarberShop</span>
-                <span style="font-family:'Playfair Display',serif;font-size:10px;font-weight:700;color:var(--white);">17:03</span>
-              </div>
-              <div style="font-size:6px;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">▶ Em atendimento</div>
-              <div style="background:#1a1a1a;border:1px solid rgba(76,175,125,0.3);border-left:3px solid var(--green);border-radius:5px;padding:6px;margin-bottom:6px;">
-                <div style="font-size:13px;font-weight:900;color:var(--white);">Diego</div>
-                <div style="font-size:8px;color:var(--gold);">✂️ Barba · até 17:25</div>
-              </div>
-              <div style="font-size:6px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">⏭ A seguir</div>
-              <div style="background:#1a1a1a;border:1px solid rgba(201,168,76,0.2);border-radius:5px;padding:5px 7px;margin-bottom:2px;display:flex;align-items:center;gap:5px;">
-                <span style="font-size:9px;font-weight:700;color:var(--gold);width:26px;">17:30</span>
-                <div style="flex:1;font-size:9px;font-weight:600;">Matheus</div>
-                <div style="background:var(--gold);color:#0f0f0f;width:14px;height:14px;border-radius:50%;font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;">1</div>
-              </div>
-              <div style="background:#1a1a1a;border:1px solid var(--border);border-radius:5px;padding:5px 7px;display:flex;align-items:center;gap:5px;">
-                <span style="font-size:9px;font-weight:700;color:var(--muted);width:26px;">18:15</span>
-                <div style="flex:1;font-size:9px;color:var(--muted);">Caetano</div>
-                <div style="background:var(--border);color:var(--muted);width:14px;height:14px;border-radius:50%;font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;">2</div>
+          <!-- Mockup -->
+          <div style="background:#111;border-top:1px solid var(--border);padding:20px;display:flex;justify-content:center;">
+            <div style="background:#1a1a1a;border:2px solid #333;border-radius:14px;padding:7px;width:230px;box-shadow:0 20px 40px rgba(0,0,0,0.5);">
+              <div style="background:#0f0f0f;border-radius:8px;overflow:hidden;padding:9px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;border-bottom:1px solid var(--border);padding-bottom:5px;">
+                  <span style="font-family:'Playfair Display',serif;font-size:9px;font-weight:900;color:var(--gold);">✂️ Léo BarberShop</span>
+                  <span style="font-family:'Playfair Display',serif;font-size:10px;font-weight:700;color:var(--white);">17:03</span>
+                </div>
+                <div style="font-size:6px;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">▶ Em atendimento</div>
+                <div style="background:#1a1a1a;border:1px solid rgba(76,175,125,0.3);border-left:3px solid var(--green);border-radius:5px;padding:6px;margin-bottom:6px;">
+                  <div style="font-size:13px;font-weight:900;color:var(--white);">Diego</div>
+                  <div style="font-size:8px;color:var(--gold);">✂️ Barba · até 17:25</div>
+                </div>
+                <div style="font-size:6px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">⏭ A seguir</div>
+                <div style="background:#1a1a1a;border:1px solid rgba(201,168,76,0.2);border-radius:5px;padding:5px 7px;margin-bottom:2px;display:flex;align-items:center;gap:5px;">
+                  <span style="font-size:9px;font-weight:700;color:var(--gold);width:26px;">17:30</span>
+                  <div style="flex:1;font-size:9px;font-weight:600;">Matheus</div>
+                  <div style="background:var(--gold);color:#0f0f0f;width:14px;height:14px;border-radius:50%;font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;">1</div>
+                </div>
+                <div style="background:#1a1a1a;border:1px solid var(--border);border-radius:5px;display:flex;align-items:center;gap:5px;padding:5px 7px;">
+                  <span style="font-size:9px;font-weight:700;color:var(--muted);width:26px;">18:15</span>
+                  <div style="flex:1;font-size:9px;color:var(--muted);">Caetano</div>
+                  <div style="background:var(--border);color:var(--muted);width:14px;height:14px;border-radius:50%;font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;">2</div>
+                </div>
               </div>
             </div>
           </div>
@@ -902,6 +1121,73 @@
   </div>
 </section>
 
+<!-- FAQ ACORDEÃO -->
+<section id="faq" style="padding:100px 24px;background:var(--surf);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="container" style="max-width:800px;">
+    <div class="section-eyebrow" style="text-align:center;">Dúvidas frequentes</div>
+    <h2 class="section-title" style="text-align:center;margin-bottom:48px;">Tudo que você<br><span style="color:var(--gold)">precisa saber</span></h2>
+    
+    <div class="faq-container">
+      
+      <!-- FAQ item 1 -->
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-question">
+          <h3>O CorteFlow funciona em celulares Android e iPhone?</h3>
+          <span class="faq-icon"></span>
+        </div>
+        <div class="faq-answer">
+          <p>Sim! O CorteFlow é um sistema totalmente web e responsivo de última geração. Ele se adapta perfeitamente a qualquer tela: computador, tablet ou celular (seja Android ou iOS), sem precisar gastar memória do seu aparelho.</p>
+        </div>
+      </div>
+
+      <!-- FAQ item 2 -->
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-question">
+          <h3>Preciso instalar algum aplicativo no computador ou celular?</h3>
+          <span class="faq-icon"></span>
+        </div>
+        <div class="faq-answer">
+          <p>Não! Você acessa tudo diretamente pelo navegador de internet (como Chrome ou Safari) através de um link seguro. Isso garante atualizações automáticas e em tempo real, sem dor de cabeça com instalações ou atualizações na loja.</p>
+        </div>
+      </div>
+
+      <!-- FAQ item 3 -->
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-question">
+          <h3>Como funciona o teste gratuito de 15 dias para o plano Equipe?</h3>
+          <span class="faq-icon"></span>
+        </div>
+        <div class="faq-answer">
+          <p>É super simples: você ativa a sua conta do plano Equipe e ganha 15 dias de acesso total e gratuito para testar com toda a sua equipe. Não exigimos cartão de crédito para testar e você pode decidir se deseja continuar apenas no final do período.</p>
+        </div>
+      </div>
+
+      <!-- FAQ item 4 -->
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-question">
+          <h3>O cliente precisa criar conta ou senha para agendar?</h3>
+          <span class="faq-icon"></span>
+        </div>
+        <div class="faq-answer">
+          <p>Não! Criamos um fluxo de agendamento ultra-rápido focado em conversão. O seu cliente só precisa acessar o seu link, escolher o serviço, o profissional e o horário, e confirmar digitando apenas o nome e o número de telefone (para receber o lembrete automático).</p>
+        </div>
+      </div>
+
+      <!-- FAQ item 5 -->
+      <div class="faq-item" onclick="toggleFaq(this)">
+        <div class="faq-question">
+          <h3>Posso cancelar a assinatura quando quiser?</h3>
+          <span class="faq-icon"></span>
+        </div>
+        <div class="faq-answer">
+          <p>Com certeza! Não trabalhamos com contratos de fidelidade de longo prazo. Você pode cancelar sua assinatura mensal a qualquer momento com apenas um clique e sem nenhuma taxa oculta ou multa de rescisão.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 <!-- PLANOS -->
 <section id="planos">
   <div class="container">
@@ -1007,6 +1293,70 @@
   <strong>✂️ CorteFlow</strong> · Sua barbearia no controle<br>
   <span style="margin-top:8px;display:block;">✝️ Col 3:23 · Desenvolvido com propósito · Várzea Paulista, SP</span>
 </footer>
+
+<!-- MOBILE CTA FLUTUANTE -->
+<div class="mobile-cta-container">
+  <a href="https://web-production-472f4f.up.railway.app/interesse" target="_blank" class="mobile-cta-btn">
+    ✓ Solicitar acesso gratuito
+  </a>
+</div>
+
+<!-- SCRIPTS DE INTERATIVIDADE -->
+<script>
+  // Função para alternar abas de mockups na seção "Veja na Prática"
+  function switchPraticaTab(tabId) {
+    const buttons = document.querySelectorAll('.pratica-tab-btn');
+    buttons.forEach(btn => btn.classList.remove('active'));
+    
+    const panels = document.querySelectorAll('.pratica-tab-panel');
+    panels.forEach(panel => panel.classList.remove('active'));
+    
+    let targetBtn;
+    if (tabId === 'barbeiro') targetBtn = buttons[0];
+    else if (tabId === 'cliente') targetBtn = buttons[1];
+    else if (tabId === 'salao') targetBtn = buttons[2];
+    
+    if (targetBtn) targetBtn.classList.add('active');
+    
+    const activePanel = document.getElementById('tab-' + tabId);
+    if (activePanel) {
+      activePanel.classList.add('active');
+    }
+  }
+
+  // Função para controle do FAQ acordeão
+  function toggleFaq(item) {
+    const isActive = item.classList.contains('active');
+    
+    const activeItems = document.querySelectorAll('.faq-item.active');
+    activeItems.forEach(el => el.classList.remove('active'));
+    
+    if (!isActive) {
+      item.classList.add('active');
+    }
+  }
+
+  // Smooth scroll para links âncora do cabeçalho
+  document.querySelectorAll('.nav-links a').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      const targetId = this.getAttribute('href');
+      const targetSection = document.querySelector(targetId);
+      if (targetSection) {
+        const offset = 80; // height of fixed nav bar
+        const bodyRect = document.body.getBoundingClientRect().top;
+        const elementRect = targetSection.getBoundingClientRect().top;
+        const elementPosition = elementRect - bodyRect;
+        const offsetPosition = elementPosition - offset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
+    });
+  });
+</script>
 
 </body>
 </html>
