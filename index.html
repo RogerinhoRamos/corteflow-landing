@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CorteFlow — Sua barbearia no controle</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✂️</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:      #0a0a0a;
+      --surf:    #141414;
+      --surf2:   #1a1a1a;
+      --gold:    #c9a84c;
+      --gold2:   #e8c97a;
+      --gold3:   rgba(201,168,76,0.12);
+      --white:   #f0ede8;
+      --muted:   #888;
+      --border:  #222;
+      --green:   #4caf7d;
+      --red:     #e05252;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ─────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 48px;
+      background: rgba(10,10,10,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(201,168,76,0.1);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-family: 'Playfair Display', serif;
+      font-size: 22px; font-weight: 900; color: var(--gold);
+      text-decoration: none;
+    }
+    .nav-logo span { font-size: 26px; }
+    .nav-cta {
+      padding: 10px 24px;
+      background: var(--gold);
+      color: #0a0a0a;
+      font-weight: 700; font-size: 14px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .nav-cta:hover { background: var(--gold2); }
+
+    /* ── HERO ────────────────────────────────────── */
+    /* Scroll indicator */
+    .scroll-indicator {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      z-index: 10;
+      animation: fadeInUp 1s ease 1.5s both;
+      text-decoration: none;
+    }
+    .scroll-indicator span {
+      font-size: 11px;
+      color: rgba(201,168,76,0.6);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .scroll-arrow {
+      width: 36px;
+      height: 36px;
+      border: 1.5px solid rgba(201,168,76,0.35);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: bounce 2s ease-in-out infinite;
+    }
+    .scroll-arrow::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-right: 2px solid #c9a84c;
+      border-bottom: 2px solid #c9a84c;
+      transform: rotate(45deg) translateY(-2px);
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(8px); }
+    }
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 30%, rgba(201,168,76,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 20% 80%, rgba(201,168,76,0.04) 0%, transparent 60%);
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 16px;
+      border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 20px;
+      font-size: 12px; font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 2px; text-transform: uppercase;
+      margin-bottom: 32px;
+      animation: fadeUp 0.6s ease both;
+    }
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(44px, 8vw, 96px);
+      font-weight: 900;
+      line-height: 0.95;
+      margin-bottom: 24px;
+      animation: fadeUp 0.6s ease 0.1s both;
+    }
+    .hero-title .gold { color: var(--gold); }
+    .hero-title .thin { font-weight: 400; font-style: italic; }
+    .hero-sub {
+      font-size: clamp(16px, 2vw, 20px);
+      color: var(--muted);
+      max-width: 560px;
+      line-height: 1.7;
+      margin-bottom: 48px;
+      animation: fadeUp 0.6s ease 0.2s both;
+    }
+    .hero-btns {
+      display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+      animation: fadeUp 0.6s ease 0.3s both;
+    }
+    .btn-primary {
+      padding: 16px 36px;
+      background: var(--gold);
+      color: #0a0a0a;
+      font-weight: 700; font-size: 16px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: all 0.2s;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-primary:hover { background: var(--gold2); transform: translateY(-2px); }
+    .btn-outline {
+      padding: 16px 36px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 16px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* Preview mockup */
+    .hero-mockup {
+      margin-top: 64px;
+      width: 100%; max-width: 900px;
+      animation: fadeUp 0.8s ease 0.4s both;
+    }
+    .mockup-browser {
+      background: var(--surf);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(201,168,76,0.1);
+    }
+    .mockup-bar {
+      background: #1e1e1e;
+      padding: 12px 16px;
+      display: flex; align-items: center; gap: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .mockup-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .mockup-url {
+      flex: 1; background: #2a2a2a;
+      border-radius: 6px; padding: 4px 12px;
+      font-size: 12px; color: var(--muted);
+      margin: 0 8px;
+    }
+    .mockup-content {
+      display: flex; height: 340px;
+    }
+    .mockup-sidebar {
+      width: 180px; flex-shrink: 0;
+      background: #111;
+      border-right: 1px solid var(--border);
+      padding: 16px;
+    }
+    .mockup-logo-mini {
+      display: flex; align-items: center; gap: 6px;
+      font-family: 'Playfair Display', serif;
+      font-size: 14px; font-weight: 900; color: var(--gold);
+      margin-bottom: 24px;
+    }
+    .mockup-nav-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 10px; border-radius: 6px;
+      font-size: 12px; color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .mockup-nav-item.active {
+      background: var(--gold3); color: var(--gold);
+    }
+    .mockup-main { flex: 1; padding: 20px; overflow: hidden; }
+    .mockup-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .mockup-title { font-size: 18px; font-weight: 700; }
+    .mockup-btn-mini {
+      padding: 6px 12px; background: var(--gold);
+      color: #0a0a0a; font-size: 11px; font-weight: 700;
+      border-radius: 6px;
+    }
+    .mockup-stats { display: flex; gap: 12px; margin-bottom: 16px; }
+    .mockup-stat {
+      flex: 1; background: var(--surf2);
+      border: 1px solid var(--border);
+      border-radius: 8px; padding: 12px;
+    }
+    .mockup-stat-num { font-size: 20px; font-weight: 700; color: var(--gold); }
+    .mockup-stat-label { font-size: 10px; color: var(--muted); margin-top: 2px; }
+    .mockup-agenda { display: flex; flex-direction: column; gap: 6px; }
+    .mockup-ag-item {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--surf2); border-radius: 6px;
+      padding: 8px 12px; font-size: 11px;
+    }
+    .mockup-ag-hora { color: var(--gold); font-weight: 700; width: 36px; flex-shrink: 0; }
+    .mockup-ag-nome { flex: 1; }
+    .mockup-ag-badge {
+      padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600;
+    }
+    .badge-conf { background: rgba(76,175,125,0.2); color: var(--green); }
+    .badge-pend { background: rgba(201,168,76,0.2); color: var(--gold); }
+
+    /* ── SEÇÕES ──────────────────────────────────── */
+    section { padding: 100px 24px; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .section-eyebrow {
+      font-size: 11px; font-weight: 700; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--gold);
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(32px, 5vw, 56px);
+      font-weight: 900; line-height: 1.1;
+      margin-bottom: 20px;
+    }
+    .section-sub {
+      font-size: 18px; color: var(--muted);
+      line-height: 1.7; max-width: 560px;
+    }
+
+    /* ── PROBLEMA ────────────────────────────────── */
+    .problema { background: var(--surf); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .problema-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px; margin-top: 48px;
+    }
+    .problema-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px; padding: 24px;
+      position: relative; overflow: hidden;
+    }
+    .problema-card::before {
+      content: '✗';
+      position: absolute; top: 16px; right: 16px;
+      color: var(--red); font-size: 18px; font-weight: 700;
+    }
+    .problema-icon { font-size: 28px; margin-bottom: 12px; }
+    .problema-nome { font-weight: 600; margin-bottom: 6px; }
+    .problema-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+    /* ── FUNCIONALIDADES ─────────────────────────── */
+    .features-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px; margin-top: 64px;
+    }
+    .feature-card {
+      background: var(--surf);
+      border: 1px solid var(--border);
+      border-radius: 16px; padding: 32px;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .feature-card:hover {
+      border-color: rgba(201,168,76,0.3);
+      transform: translateY(-4px);
+    }
+    .feature-icon { font-size: 36px; margin-bottom: 16px; }
+    .feature-title { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+    .feature-desc { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+    /* ── COMO FUNCIONA ───────────────────────────── */
+    .steps { background: var(--surf); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .steps-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 48px; margin-top: 64px;
+      position: relative;
+    }
+    .step { text-align: center; }
+    .step-num {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: var(--gold3);
+      border: 2px solid var(--gold);
+      color: var(--gold);
+      font-family: 'Playfair Display', serif;
+      font-size: 22px; font-weight: 900;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .step-title { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+    .step-desc { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+    /* ── PLANOS ──────────────────────────────────── */
+    .planos-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px; margin-top: 64px;
+    }
+    .plano-card {
+      background: var(--surf);
+      border: 1px solid var(--border);
+      border-radius: 16px; padding: 36px;
+      position: relative;
+      transition: border-color 0.3s;
+    }
+    .plano-card.destaque {
+      border-color: var(--gold);
+      background: linear-gradient(135deg, #1a1a1a 0%, #1e1a10 100%);
+    }
+    .plano-badge {
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      background: var(--gold); color: #0a0a0a;
+      font-size: 11px; font-weight: 700; letter-spacing: 1px;
+      padding: 4px 16px; border-radius: 20px;
+      white-space: nowrap;
+    }
+    .plano-icon { font-size: 32px; margin-bottom: 16px; }
+    .plano-nome { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+    .plano-perfil { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+    .plano-preco {
+      font-family: 'Playfair Display', serif;
+      font-size: 48px; font-weight: 900; color: var(--gold);
+      line-height: 1; margin-bottom: 4px;
+    }
+    .plano-preco span { font-size: 18px; font-weight: 400; }
+    .plano-periodo { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+    .plano-items { list-style: none; margin-bottom: 28px; }
+    .plano-items li {
+      font-size: 14px; color: var(--muted);
+      padding: 6px 0; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .plano-items li::before { content: '✓'; color: var(--green); font-weight: 700; }
+    .plano-items li.em-breve::before { content: '⏳'; }
+    .plano-items li.em-breve { opacity: 0.5; }
+    .plano-btn {
+      display: block; width: 100%;
+      padding: 14px;
+      border-radius: 10px; border: none;
+      font-size: 15px; font-weight: 700;
+      text-align: center; text-decoration: none;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .plano-btn.primary { background: var(--gold); color: #0a0a0a; }
+    .plano-btn.primary:hover { background: var(--gold2); }
+    .plano-btn.outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .plano-btn.outline:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ── DEPOIMENTO ──────────────────────────────── */
+    .depoimento {
+      background: var(--surf);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+    .depoimento-texto {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(22px, 3.5vw, 36px);
+      font-style: italic;
+      color: var(--white);
+      max-width: 700px;
+      margin: 0 auto 24px;
+      line-height: 1.5;
+    }
+    .depoimento-autor { font-size: 14px; color: var(--muted); }
+    .depoimento-autor strong { color: var(--gold); }
+
+    /* ── CTA FINAL ───────────────────────────────── */
+    .cta-final {
+      text-align: center;
+      background: linear-gradient(135deg, #0a0a0a 0%, #14110a 100%);
+      border-top: 1px solid rgba(201,168,76,0.2);
+    }
+    .cta-final .section-title { margin-bottom: 16px; }
+
+    /* ── FOOTER ──────────────────────────────────── */
+    footer {
+      padding: 32px 24px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 13px; color: var(--muted);
+    }
+    footer strong { color: var(--gold); }
+
+    /* ── ANIMAÇÕES ───────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVO ──────────────────────────────── */
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+      .mockup-sidebar { display: none; }
+      .mockup-content { height: 260px; }
+      .hero-btns { flex-direction: column; align-items: center; }
+      .btn-primary, .btn-outline { width: 100%; max-width: 300px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <span>✂️</span> CorteFlow
+  </a>
+  <a href="https://web-production-472f4f.up.railway.app/interesse" target="_blank" class="nav-cta">Solicitar acesso</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">✂️ &nbsp; Feito para barbearia</div>
+  <h1 class="hero-title">
+    Sua barbearia<br>
+    <span class="gold">no controle</span><br>
+    <span class="thin">de verdade.</span>
+  </h1>
+  <p class="hero-sub">
+    Agendamento online, modo salão, fidelização inteligente e lembretes automáticos.
+    Tudo num sistema feito especialmente para barbearias.
+  </p>
+  <div class="hero-btns">
+    <a href="https://web-production-472f4f.up.railway.app/interesse" target="_blank" class="btn-primary">✓ Quero conhecer</a>
+    <a href="#funcionalidades" class="btn-outline">Ver funcionalidades</a>
+  </div>
+
+  <!-- Mockup do sistema -->
+  <div class="hero-mockup">
+    <div class="mockup-browser">
+      <div class="mockup-bar">
+        <div class="mockup-dot" style="background:#e05252;"></div>
+        <div class="mockup-dot" style="background:#e0a852;"></div>
+        <div class="mockup-dot" style="background:#4caf7d;"></div>
+        <div class="mockup-url">corteflow · Dashboard</div>
+      </div>
+      <div class="mockup-content">
+        <div class="mockup-sidebar">
+          <div class="mockup-logo-mini">✂️ CorteFlow</div>
+          <div class="mockup-nav-item active">📊 Hoje</div>
+          <div class="mockup-nav-item">📅 Agenda</div>
+          <div class="mockup-nav-item">⚡ Encaixe</div>
+          <div class="mockup-nav-item">👤 Clientes</div>
+          <div class="mockup-nav-item">🖥️ Modo Salão</div>
+          <div class="mockup-nav-item">💰 Caixa</div>
+        </div>
+        <div class="mockup-main">
+          <div class="mockup-header">
+            <div class="mockup-title">Olá, Léo! ☀️</div>
+            <div class="mockup-btn-mini">+ Encaixe Rápido</div>
+          </div>
+          <div class="mockup-stats">
+            <div class="mockup-stat">
+              <div class="mockup-stat-num">8</div>
+              <div class="mockup-stat-label">Agendados hoje</div>
+            </div>
+            <div class="mockup-stat">
+              <div class="mockup-stat-num">5</div>
+              <div class="mockup-stat-label">Atendidos</div>
+            </div>
+            <div class="mockup-stat" style="cursor:pointer;" onclick="this.querySelector('.val').style.filter=this.querySelector('.val').style.filter?'':'blur(6px)'">
+              <div class="mockup-stat-num val" style="color:var(--green);transition:filter 0.3s">R$275</div>
+              <div class="mockup-stat-label">Faturamento 👁</div>
+            </div>
+          </div>
+          <div class="mockup-agenda">
+            <div class="mockup-ag-item">
+              <div class="mockup-ag-hora">14:00</div>
+              <div class="mockup-ag-nome">Carlos · Corte + Barba</div>
+              <div class="mockup-ag-badge badge-conf">Confirmado</div>
+            </div>
+            <div class="mockup-ag-item" style="border:1px solid rgba(201,168,76,0.3);background:rgba(201,168,76,0.05)">
+              <div class="mockup-ag-hora">15:00</div>
+              <div class="mockup-ag-nome">João Silva 🎂 · Corte</div>
+              <div class="mockup-ag-badge badge-pend">Em atendimento</div>
+            </div>
+            <div class="mockup-ag-item">
+              <div class="mockup-ag-hora">16:00</div>
+              <div class="mockup-ag-nome">Pedro · Barba</div>
+              <div class="mockup-ag-badge badge-conf">Confirmado</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Scroll indicator -->
+  <a href="#funcionalidades" class="scroll-indicator" aria-label="Rolar para ver mais">
+    <span>ver mais</span>
+    <div class="scroll-arrow"></div>
+  </a>
+</section>
+
+<!-- PROBLEMA -->
+<section class="problema">
+  <div class="container">
+    <div class="section-eyebrow">O problema</div>
+    <h2 class="section-title">Soluções improvisadas<br>não foram feitas para você</h2>
+    <p class="section-sub">Os barbeiros profissionais merecem um sistema feito para a realidade deles.</p>
+    <div class="problema-grid">
+      <div class="problema-card">
+        <div class="problema-icon">📅</div>
+        <div class="problema-nome">Google Calendar</div>
+        <div class="problema-desc">Não foi feito para barbearia. Sem controle de clientes, sem fidelização, sem modo salão.</div>
+      </div>
+      <div class="problema-card">
+        <div class="problema-icon">💬</div>
+        <div class="problema-nome">Grupos de WhatsApp</div>
+        <div class="problema-desc">Vira bagunça. Sem controle, sem confirmação automática, sem histórico de clientes.</div>
+      </div>
+      <div class="problema-card">
+        <div class="problema-icon">🏪</div>
+        <div class="problema-nome">Marketplaces</div>
+        <div class="problema-desc">Divide sua agenda com a concorrência. Cobra por agendamento. Seu cliente não é seu.</div>
+      </div>
+      <div class="problema-card">
+        <div class="problema-icon">💻</div>
+        <div class="problema-nome">Sistemas genéricos</div>
+        <div class="problema-desc">Complexos, caros e não entendem a realidade de uma barbearia de bairro.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FUNCIONALIDADES -->
+<section id="funcionalidades">
+  <div class="container">
+    <div class="section-eyebrow">A solução</div>
+    <h2 class="section-title">Tudo que sua barbearia<br>precisa em um lugar só</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📅</div>
+        <div class="feature-title">Agenda Visual</div>
+        <div class="feature-desc">Visualize todos os agendamentos do dia. Arraste, encaixe e remarque com facilidade. Controle total na palma da mão.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <div class="feature-title">Link de Agendamento</div>
+        <div class="feature-desc">Seu cliente acessa um link personalizado, escolhe o serviço e o horário. Sem ligação, sem grupo de WhatsApp.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🖥️</div>
+        <div class="feature-title">Modo Salão</div>
+        <div class="feature-desc">Tela elegante para o tablet da barbearia. Mostra em tempo real quem está sendo atendido, a fila e os números do dia.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔔</div>
+        <div class="feature-title">Lembretes Automáticos</div>
+        <div class="feature-desc">Seu cliente recebe lembrete no dia anterior e 1 hora antes. Chega ao fim o furo de horário por esquecimento.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏆</div>
+        <div class="feature-title">Fidelização Inteligente</div>
+        <div class="feature-desc">Na 5ª, 10ª e 20ª visita, uma mensagem especial. No aniversário, um parabéns. Quem sumiu, um "sentimos sua falta". Automático.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💰</div>
+        <div class="feature-title">Caixa do Dia</div>
+        <div class="feature-desc">Fechamento diário com totais por forma de pagamento. Saiba exatamente o que entrou em cada dia.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MULTICADEIRAS -->
+<section style="padding:100px 24px;background:linear-gradient(180deg,#0a0a0a 0%,#0d1208 100%);">
+  <div class="container">
+    <div class="section-eyebrow" style="text-align:center;">novo · v3.0</div>
+    <h2 class="section-title" style="text-align:center;">Para barbearias<br><span style="color:var(--gold)">com equipe</span></h2>
+    <p class="section-sub" style="text-align:center;margin:0 auto 64px;max-width:540px;">
+      Gerencie múltiplos profissionais, agendas independentes e clientes — tudo em um só sistema.
+    </p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;">
+
+      <div style="background:#141414;border:1px solid rgba(201,168,76,.2);border-radius:16px;padding:28px;border-top:3px solid #c9a84c;">
+        <div style="font-size:36px;margin-bottom:14px;">✂️</div>
+        <div style="font-size:17px;font-weight:700;margin-bottom:8px;">Profissionais independentes</div>
+        <div style="font-size:14px;color:#888;line-height:1.7;">Cada barbeiro tem sua própria agenda com cor personalizada. O dono vê tudo junto com filtro por profissional.</div>
+      </div>
+
+      <div style="background:#141414;border:1px solid rgba(91,141,238,.2);border-radius:16px;padding:28px;border-top:3px solid #5b8dee;">
+        <div style="font-size:36px;margin-bottom:14px;">📱</div>
+        <div style="font-size:17px;font-weight:700;margin-bottom:8px;">Link pessoal do barbeiro</div>
+        <div style="font-size:14px;color:#888;line-height:1.7;">Cada profissional recebe um link permanente para o celular. Agenda completa — sem senha, sem complicação.</div>
+      </div>
+
+      <div style="background:#141414;border:1px solid rgba(76,175,125,.2);border-radius:16px;padding:28px;border-top:3px solid #4caf7d;">
+        <div style="font-size:36px;margin-bottom:14px;">📅</div>
+        <div style="font-size:17px;font-weight:700;margin-bottom:8px;">Cliente escolhe o barbeiro</div>
+        <div style="font-size:14px;color:#888;line-height:1.7;">No link de agendamento, o cliente escolhe o profissional preferido — ou deixa o sistema atribuir automaticamente.</div>
+      </div>
+
+      <div style="background:#141414;border:1px solid rgba(155,114,207,.2);border-radius:16px;padding:28px;border-top:3px solid #9b72cf;">
+        <div style="font-size:36px;margin-bottom:14px;">📺</div>
+        <div style="font-size:17px;font-weight:700;margin-bottom:8px;">Modo Salão para equipe</div>
+        <div style="font-size:14px;color:#888;line-height:1.7;">TV na recepção mostra um card por profissional: quem está atendendo agora e quem é o próximo de cada cadeira.</div>
+      </div>
+
+    </div>
+
+    <div style="text-align:center;margin-top:48px;">
+      <div style="display:inline-block;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);
+                  border-radius:12px;padding:20px 40px;">
+        <div style="font-size:13px;color:#888;margin-bottom:6px;">PRECIFICAÇÃO POR CADEIRAS</div>
+        <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap;justify-content:center;">
+          <span style="font-size:15px;color:#e8e8e8;">1 cadeira — <strong style="color:#c9a84c;">R$29/mês</strong></span>
+          <span style="color:#333;">·</span>
+          <span style="font-size:15px;color:#e8e8e8;">2 cadeiras — <strong style="color:#c9a84c;">R$49/mês</strong></span>
+          <span style="color:#333;">·</span>
+          <span style="font-size:15px;color:#e8e8e8;">3 cadeiras — <strong style="color:#c9a84c;">R$69/mês</strong></span>
+          <span style="color:#333;">·</span>
+          <span style="font-size:15px;color:#e8e8e8;">até 5 cadeiras — <strong style="color:#c9a84c;">R$109/mês</strong></span>
+        </div>
+        <div style="font-size:12px;color:#555;margin-top:8px;">R$29 base + R$20 por cadeira adicional</div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- TELAS NA PRÁTICA -->
+<section style="background:var(--surf);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:100px 24px;">
+  <div class="container">
+    <div class="section-eyebrow" style="text-align:center;">Veja na prática</div>
+    <h2 class="section-title" style="text-align:center;">Do barbeiro ao cliente,<br>tudo conectado</h2>
+    <p class="section-sub" style="text-align:center;margin:0 auto 64px;">Três experiências pensadas para cada momento do atendimento.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;align-items:start;">
+
+      <!-- Card 1: Login do barbeiro -->
+      <div style="background:var(--surf2);border:1px solid var(--border);border-radius:20px;overflow:hidden;">
+        <!-- Badge + Descrição ACIMA -->
+        <div style="padding:20px 20px 16px;">
+          <div style="display:inline-flex;align-items:center;gap:6px;
+               background:rgba(76,175,125,.12);border:1px solid rgba(76,175,125,.25);
+               border-radius:20px;padding:4px 12px;margin-bottom:12px;">
+            <span style="width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;"></span>
+            <span style="font-size:10px;font-weight:700;color:var(--green);letter-spacing:1px;text-transform:uppercase;">Para o barbeiro</span>
+          </div>
+          <div style="font-size:16px;font-weight:700;color:var(--white);margin-bottom:6px;">Login do barbeiro</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6;">Acesso rápido pelo celular. A barbearia na palma da mão, em qualquer lugar.</div>
+        </div>
+        <!-- Mockup -->
+        <div style="background:#111;border-top:1px solid var(--border);padding:20px;display:flex;justify-content:center;">
+          <div style="background:#1a1a1a;border:2px solid #333;border-radius:28px;padding:10px 7px;width:180px;box-shadow:0 20px 40px rgba(0,0,0,0.5);">
+            <div style="background:#111;border-radius:20px;overflow:hidden;padding:14px;">
+              <div style="text-align:center;margin-bottom:14px;">
+                <div style="font-size:24px;">✂️</div>
+                <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:900;color:var(--gold);">CorteFlow</div>
+                <div style="font-size:8px;color:var(--muted);margin-top:2px;">Sua barbearia no controle</div>
+              </div>
+              <div style="background:#1e1e1e;border:1px solid var(--border);border-radius:8px;padding:10px;">
+                <div style="font-size:10px;font-weight:600;margin-bottom:7px;">Entrar na sua conta</div>
+                <div style="background:#2a2a2a;border-radius:5px;padding:5px 8px;font-size:8px;color:var(--muted);margin-bottom:5px;">seu@email.com</div>
+                <div style="background:#2a2a2a;border-radius:5px;padding:5px 8px;font-size:8px;color:var(--muted);margin-bottom:8px;">••••••••</div>
+                <div style="background:var(--gold);border-radius:5px;padding:6px;font-size:8px;font-weight:700;color:#0a0a0a;text-align:center;">Entrar</div>
+              </div>
+              <div style="text-align:center;margin-top:8px;font-size:7px;color:var(--muted);">Quer conhecer? <span style="color:var(--gold);">Solicite acesso</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Agendamento do cliente -->
+      <div style="background:var(--surf2);border:1px solid var(--border);border-radius:20px;overflow:hidden;">
+        <!-- Badge + Descrição ACIMA -->
+        <div style="padding:20px 20px 16px;">
+          <div style="display:inline-flex;align-items:center;gap:6px;
+               background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.25);
+               border-radius:20px;padding:4px 12px;margin-bottom:12px;">
+            <span style="width:7px;height:7px;border-radius:50%;background:var(--gold);display:inline-block;"></span>
+            <span style="font-size:10px;font-weight:700;color:var(--gold);letter-spacing:1px;text-transform:uppercase;">Para o cliente</span>
+          </div>
+          <div style="font-size:16px;font-weight:700;color:var(--white);margin-bottom:6px;">Agendamento online</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6;">O cliente acessa pelo link, escolhe o serviço e o horário. Sem ligação, sem WhatsApp.</div>
+        </div>
+        <!-- Mockup -->
+        <div style="background:#111;border-top:1px solid var(--border);padding:20px;display:flex;justify-content:center;">
+          <div style="background:#1a1a1a;border:2px solid #333;border-radius:28px;padding:10px 7px;width:180px;box-shadow:0 20px 40px rgba(0,0,0,0.5);">
+            <div style="background:#111;border-radius:20px;overflow:hidden;padding:12px;">
+              <div style="text-align:center;margin-bottom:10px;">
+                <div style="font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">Léo BarberShop</div>
+                <div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--gold);">Agendar serviço</div>
+              </div>
+              <div style="font-size:7px;color:var(--muted);margin-bottom:5px;">Escolha o serviço</div>
+              <div style="background:rgba(201,168,76,0.15);border:1px solid var(--gold);border-radius:5px;padding:5px 7px;margin-bottom:3px;display:flex;justify-content:space-between;">
+                <span style="font-size:8px;font-weight:700;">✂️ Corte + Barba</span>
+                <span style="font-size:8px;color:var(--gold);">R$55</span>
+              </div>
+              <div style="background:#1e1e1e;border:1px solid var(--border);border-radius:5px;padding:5px 7px;margin-bottom:7px;display:flex;justify-content:space-between;">
+                <span style="font-size:8px;color:var(--muted);">✂️ Corte</span>
+                <span style="font-size:8px;color:var(--muted);">R$35</span>
+              </div>
+              <div style="font-size:7px;color:var(--muted);margin-bottom:5px;">Escolha o horário</div>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-bottom:7px;">
+                <div style="background:#1e1e1e;border:1px solid var(--border);border-radius:3px;padding:3px;font-size:7px;text-align:center;color:var(--muted);">🔒 09:00</div>
+                <div style="background:rgba(201,168,76,0.15);border:1px solid var(--gold);border-radius:3px;padding:3px;font-size:7px;text-align:center;color:var(--gold);font-weight:700;">10:00</div>
+                <div style="background:#1e1e1e;border:1px solid var(--border);border-radius:3px;padding:3px;font-size:7px;text-align:center;color:var(--muted);">11:00</div>
+              </div>
+              <div style="background:var(--gold);border-radius:5px;padding:6px;font-size:8px;font-weight:700;color:#0a0a0a;text-align:center;">✓ Confirmar</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Modo Salão -->
+      <div style="background:var(--surf2);border:1px solid var(--border);border-radius:20px;overflow:hidden;">
+        <!-- Badge + Descrição ACIMA -->
+        <div style="padding:20px 20px 16px;">
+          <div style="display:inline-flex;align-items:center;gap:6px;
+               background:rgba(68,136,255,.12);border:1px solid rgba(68,136,255,.25);
+               border-radius:20px;padding:4px 12px;margin-bottom:12px;">
+            <span style="width:7px;height:7px;border-radius:50%;background:#4488ff;display:inline-block;"></span>
+            <span style="font-size:10px;font-weight:700;color:#4488ff;letter-spacing:1px;text-transform:uppercase;">Na barbearia</span>
+          </div>
+          <div style="font-size:16px;font-weight:700;color:var(--white);margin-bottom:6px;">Modo Salão</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6;">Tela para o tablet da barbearia. Atualiza em tempo real com a fila e os números do dia.</div>
+        </div>
+        <!-- Mockup -->
+        <div style="background:#111;border-top:1px solid var(--border);padding:20px;display:flex;justify-content:center;">
+          <div style="background:#1a1a1a;border:2px solid #333;border-radius:14px;padding:7px;width:230px;box-shadow:0 20px 40px rgba(0,0,0,0.5);">
+            <div style="background:#0f0f0f;border-radius:8px;overflow:hidden;padding:9px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;border-bottom:1px solid var(--border);padding-bottom:5px;">
+                <span style="font-family:'Playfair Display',serif;font-size:9px;font-weight:900;color:var(--gold);">✂️ Léo BarberShop</span>
+                <span style="font-family:'Playfair Display',serif;font-size:10px;font-weight:700;color:var(--white);">17:03</span>
+              </div>
+              <div style="font-size:6px;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">▶ Em atendimento</div>
+              <div style="background:#1a1a1a;border:1px solid rgba(76,175,125,0.3);border-left:3px solid var(--green);border-radius:5px;padding:6px;margin-bottom:6px;">
+                <div style="font-size:13px;font-weight:900;color:var(--white);">Diego</div>
+                <div style="font-size:8px;color:var(--gold);">✂️ Barba · até 17:25</div>
+              </div>
+              <div style="font-size:6px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">⏭ A seguir</div>
+              <div style="background:#1a1a1a;border:1px solid rgba(201,168,76,0.2);border-radius:5px;padding:5px 7px;margin-bottom:2px;display:flex;align-items:center;gap:5px;">
+                <span style="font-size:9px;font-weight:700;color:var(--gold);width:26px;">17:30</span>
+                <div style="flex:1;font-size:9px;font-weight:600;">Matheus</div>
+                <div style="background:var(--gold);color:#0f0f0f;width:14px;height:14px;border-radius:50%;font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;">1</div>
+              </div>
+              <div style="background:#1a1a1a;border:1px solid var(--border);border-radius:5px;padding:5px 7px;display:flex;align-items:center;gap:5px;">
+                <span style="font-size:9px;font-weight:700;color:var(--muted);width:26px;">18:15</span>
+                <div style="flex:1;font-size:9px;color:var(--muted);">Caetano</div>
+                <div style="background:var(--border);color:var(--muted);width:14px;height:14px;border-radius:50%;font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;">2</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- DIFERENCIAIS -->
+<section id="diferenciais" style="padding:100px 24px;background:var(--bg);">
+  <div class="container">
+    <div class="section-eyebrow" style="text-align:center;">Tecnologia inteligente</div>
+    <h2 class="section-title" style="text-align:center;">Dois recursos que<br><span style="color:var(--gold);">fazem a diferença</span></h2>
+    <p class="section-sub" style="text-align:center;margin:0 auto 64px;">Detalhes que separam um sistema comum de um feito para barbearia de verdade.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:32px;">
+
+      <!-- Diferencial 1 — Agenda Inteligente -->
+      <div style="background:var(--surf);border:1px solid var(--border);border-radius:20px;padding:32px;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold2));"></div>
+        <div style="font-size:36px;margin-bottom:16px;">🧠</div>
+        <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:900;margin-bottom:10px;">Agenda que nunca conflita</div>
+        <div style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:24px;">
+          O cliente escolhe o serviço, a data e vê <strong style="color:var(--white);">apenas os horários que realmente cabem</strong> — considerando a duração real de cada serviço.
+        </div>
+        <div style="background:#0f0f0f;border:1px solid #1a1a1a;border-radius:12px;padding:14px;">
+          <div style="font-size:9px;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">✂️ Corte + Barba · 55 min</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <span style="font-size:11px;font-weight:700;color:var(--red);width:36px;">09:00</span>
+            <div style="flex:1;background:rgba(224,82,82,.12);border:1px solid rgba(224,82,82,.2);border-radius:5px;padding:5px 8px;font-size:10px;color:var(--red);">🔒 Ocupado — Carlos</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <span style="font-size:11px;font-weight:700;color:#2e2e2e;width:36px;">09:30</span>
+            <div style="flex:1;background:#111;border:1px solid #1a1a1a;border-radius:5px;padding:5px 8px;font-size:10px;color:#2e2e2e;">⛔ Bloqueado automaticamente</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <span style="font-size:11px;font-weight:700;color:var(--green);width:36px;">10:00</span>
+            <div style="flex:1;background:rgba(76,175,125,.12);border:1px solid rgba(76,175,125,.2);border-radius:5px;padding:5px 8px;font-size:10px;color:var(--green);">✅ Disponível</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:11px;font-weight:700;color:var(--gold);width:36px;">10:30</span>
+            <div style="flex:1;background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);border-radius:5px;padding:5px 8px;font-size:10px;color:var(--gold);">👆 Cliente escolheu este!</div>
+          </div>
+        </div>
+        <div style="margin-top:14px;padding:10px 14px;background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.15);border-radius:8px;font-size:12px;color:var(--muted);">
+          🎯 Zero conflito. Zero retrabalho. O sistema calcula sozinho.
+        </div>
+      </div>
+
+      <!-- Diferencial 2 — Confirmação Configurável -->
+      <div style="background:var(--surf);border:1px solid var(--border);border-radius:20px;padding:32px;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold2));"></div>
+        <div style="font-size:36px;margin-bottom:16px;">⚙️</div>
+        <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:900;margin-bottom:10px;">Você decide como confirmar</div>
+        <div style="font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:24px;">
+          Confirme <strong style="color:var(--white);">manualmente</strong> para controle total, ou ative a <strong style="color:var(--gold);">confirmação automática</strong> e o cliente já sai com a confirmação na hora.
+        </div>
+        <div style="background:#0f0f0f;border:1px solid #1a1a1a;border-radius:12px;padding:14px;margin-bottom:14px;">
+          <div style="font-size:9px;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">⚙️ Configurações · Agendamento</div>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;padding:8px 10px;background:#111;border-radius:8px;">
+            <div style="width:34px;height:18px;border-radius:9px;background:#2a2a2a;border:1px solid #333;position:relative;flex-shrink:0;">
+              <div style="width:14px;height:14px;border-radius:50%;background:#444;position:absolute;top:2px;left:2px;"></div>
+            </div>
+            <div style="font-size:11px;font-weight:600;color:var(--muted);">Confirmação manual</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:8px 10px;background:rgba(201,168,76,.06);border-radius:8px;border:1px solid rgba(201,168,76,.2);">
+            <div style="width:34px;height:18px;border-radius:9px;background:var(--gold);position:relative;flex-shrink:0;">
+              <div style="width:14px;height:14px;border-radius:50%;background:#fff;position:absolute;top:2px;right:2px;"></div>
+            </div>
+            <div style="font-size:11px;font-weight:600;color:var(--gold);">✅ Confirmação automática</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="background:#0f0f0f;border:1px solid #1a1a1a;border-radius:8px;padding:12px;">
+            <div style="font-size:9px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">⏳ Manual</div>
+            <div style="font-size:10px;color:#666;line-height:1.9;">📱 Cliente agenda<br>⏳ Aguarda...<br>✅ Você confirma<br>📲 Cliente recebe</div>
+          </div>
+          <div style="background:rgba(201,168,76,.04);border:1px solid rgba(201,168,76,.15);border-radius:8px;padding:12px;">
+            <div style="font-size:9px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">⚡ Automático</div>
+            <div style="font-size:10px;line-height:1.9;">📱 Cliente agenda<br><span style="color:var(--green);">✅ Confirmado!</span><br><span style="color:var(--green);">📲 Notificado!</span><br><span style="color:#333;">· Sem espera</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="steps">
+  <div class="container">
+    <div class="section-eyebrow" style="text-align:center;">Como funciona</div>
+    <h2 class="section-title" style="text-align:center;">Pronto em minutos,<br>não em semanas</h2>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-title">Receba seu convite</div>
+        <div class="step-desc">Solicite acesso e receba um link exclusivo. Cadastre sua barbearia em menos de 2 minutos.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-title">Configure seus serviços</div>
+        <div class="step-desc">8 serviços já vêm pré-cadastrados. Edite preços, durações e horários conforme sua realidade.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-title">Compartilhe seu link</div>
+        <div class="step-desc">Mande o link de agendamento para seus clientes. Pronto — sua barbearia está no controle.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLANOS -->
+<section id="planos">
+  <div class="container">
+    <div class="section-eyebrow" style="text-align:center;">Planos</div>
+    <h2 class="section-title" style="text-align:center;">Menos que um corte<br>por mês</h2>
+    <p class="section-sub" style="text-align:center;margin:0 auto 48px;">Sem fidelidade. Cancela quando quiser. Transparente desde o início.</p>
+    <div style="max-width:380px;margin:0 auto;">
+      <div class="plano-card destaque" style="border-color:var(--gold);">
+        <!-- Badge promoção -->
+        <div style="background:rgba(224,82,82,.12);border:1px solid rgba(224,82,82,.3);
+             border-radius:8px;padding:8px 14px;margin-bottom:20px;text-align:center;">
+          <div style="font-size:11px;font-weight:700;color:#e05252;letter-spacing:1px;text-transform:uppercase;">
+            🚀 Preço de lançamento beta
+          </div>
+          <div style="font-size:10px;color:#888;margin-top:3px;">
+            Válido até 30/06/2026 · Vagas limitadas
+          </div>
+        </div>
+
+        <div class="plano-icon">✂️</div>
+        <div class="plano-nome">Solo</div>
+        <div class="plano-perfil">Para o barbeiro independente</div>
+
+        <!-- Preço riscado + novo -->
+        <div style="margin-bottom:4px;">
+          <span style="font-size:14px;color:#444;text-decoration:line-through;">de R$39/mês</span>
+        </div>
+        <div class="plano-preco" style="color:#c9a84c;font-size:64px;"><span style="font-size:24px;">R$</span>29</div>
+        <div class="plano-periodo" style="margin-bottom:8px;">por mês · sem fidelidade</div>
+        <div style="font-size:11px;color:#666;margin-bottom:20px;
+             background:#111;border-radius:6px;padding:8px 10px;line-height:1.5;">
+          ✅ Garantido por <strong style="color:var(--white);">6 meses</strong> a partir da adesão<br>
+          Após o período, preço regular de R$39/mês
+        </div>
+
+        <ul class="plano-items">
+          <li>1 barbearia, 1 agenda</li>
+          <li>Agendamento online inteligente</li>
+          <li>Modo Salão</li>
+          <li>Lembretes automáticos</li>
+          <li>Fidelização inteligente</li>
+          <li>Caixa do Dia</li>
+          <li>Suporte via Telegram</li>
+        </ul>
+        <a href="https://web-production-472f4f.up.railway.app/interesse" target="_blank" class="plano-btn primary">
+          ✓ Garantir R$29/mês agora
+        </a>
+      </div>
+      <!-- PLANO EQUIPE -->
+      <div class="plano-card">
+        <div class="plano-icon">👥</div>
+        <div class="plano-nome">Equipe</div>
+        <div class="plano-perfil">Para barbearias com múltiplos profissionais</div>
+        <div class="plano-preco" style="color:#5b8dee;font-size:48px;">
+          <span style="font-size:16px;color:#888;">a partir de </span><span style="font-size:20px;">R$</span>49
+        </div>
+        <div class="plano-periodo">por mês · sem fidelidade</div>
+        <div style="font-size:11px;color:#666;margin-bottom:20px;
+             background:#111;border-radius:6px;padding:8px 10px;line-height:1.5;">
+          💡 R$29 base + R$20 por cadeira adicional<br>
+          <strong style="color:var(--white);">2 cadeiras R$49 · 3 cadeiras R$69 · 5 cadeiras R$109</strong>
+        </div>
+        <ul class="plano-items">
+          <li>Tudo do plano Solo</li>
+          <li>Profissionais ilimitados</li>
+          <li>Agenda por profissional</li>
+          <li>Link pessoal de cada barbeiro</li>
+          <li>Cliente escolhe o profissional</li>
+          <li>Modo Salão com cards por cadeira</li>
+          <li>Notificações individuais</li>
+        </ul>
+        <a href="https://web-production-472f4f.up.railway.app/interesse" target="_blank"
+           class="plano-btn" style="background:#1a2a3a;color:#5b8dee;border:1px solid #5b8dee;">
+          ✓ Solicitar plano Equipe
+        </a>
+      </div>
+
+    </div>
+    <p style="text-align:center;margin-top:24px;font-size:13px;color:var(--muted);">
+      Teste gratuito de 15 dias para o plano Equipe · Sem cartão de crédito
+    </p>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-final">
+  <div class="container">
+    <div class="section-eyebrow" style="text-align:center;">Comece agora</div>
+    <h2 class="section-title" style="text-align:center;">Sua barbearia merece<br><span style="color:var(--gold)">um sistema de verdade</span></h2>
+    <p class="section-sub" style="text-align:center;margin:0 auto 40px;">
+      Estamos em fase beta — vagas limitadas.<br>Solicite seu acesso e seja um dos primeiros.
+    </p>
+    <div style="text-align:center;">
+      <a href="https://web-production-472f4f.up.railway.app/interesse" target="_blank" class="btn-primary" style="font-size:18px;padding:20px 48px;">
+        ✓ Solicitar meu acesso
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <strong>✂️ CorteFlow</strong> · Sua barbearia no controle<br>
+  <span style="margin-top:8px;display:block;">✝️ Col 3:23 · Desenvolvido com propósito · Várzea Paulista, SP</span>
+</footer>
+
+</body>
+</html>
